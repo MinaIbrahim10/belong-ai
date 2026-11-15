@@ -17,6 +17,7 @@ const store=new Store(env.SESSION_DB||'/state/session.sqlite',env.SESSION_KEY);
 // Protocol logs are disabled: library logs can contain credentials, JIDs and messages.
 const silent=pino({level:'silent'});
 const log=event=>process.stdout.write(JSON.stringify({time:new Date().toISOString(),event})+'\n');
+let pairingRequested=false;
 let socket,qr=null,connected=false,stopped=false,attempt=0,timer;
 const cleaner=setInterval(()=>store.clean(),60000);cleaner.unref();
 const limiter=new Limiter();
@@ -26,6 +27,22 @@ const server=createServer(async(req,res)=>{
  res.setHeader('Cache-Control','no-store');
  if(req.url==='/healthz'){res.writeHead(200,{'Content-Type':'application/json'});return res.end(JSON.stringify({alive:true,connected,paused:store.paused()}));}
  if(!authorized(req)){res.writeHead(401);return res.end();}
+ if(req.method==='POST'&&req.url==='/pair'){
+  if(!store.paused()||!qr||!socket||connected||stopped||pairingRequested){res.writeHead(409);return res.end('Pairing session unavailable');}
+  let number='';
+  req.setTimeout(5000,()=>req.destroy());
+  try{
+   for await(const chunk of req){
+    number+=chunk.toString();
+    if(number.length>16){res.writeHead(400);res.end('Invalid input');return;}
+   }
+   if(!/^[1-9][0-9]{6,14}$/.test(number)){res.writeHead(400);return res.end('Invalid input');}
+   if(pairingRequested||!qr||connected||stopped){res.writeHead(409);return res.end('Pairing session unavailable');}
+   pairingRequested=true;
+   const code=await socket.requestPairingCode(number);
+   return res.end(code);
+  }catch{if(!res.headersSent)res.writeHead(502);return res.end('Pairing failed');}
+ }
  if(req.method==='GET'&&req.url==='/qr'&&qr){res.setHeader('Content-Type','image/png');return res.end(await QRCode.toBuffer(qr));}
  if(req.method==='POST'&&req.url==='/enroll'){if(!store.paused()){res.writeHead(409);return res.end('pause first');}res.setHeader('Content-Type','application/json');return res.end(JSON.stringify(enrollment.start()));}
  if(req.method==='GET'&&req.url==='/enrollment'){res.setHeader('Content-Type','application/json');return res.end(JSON.stringify(enrollment.status()));}
@@ -37,6 +54,7 @@ const server=createServer(async(req,res)=>{
 server.listen(Number(env.PORT||8080),env.ADMIN_BIND||'127.0.0.1');
 async function connect(){
  if(stopped)return;
+ pairingRequested=false;
  const {state,saveCreds}=store.auth();
  socket=makeWASocket({auth:state,logger:silent,syncFullHistory:false,shouldSyncHistoryMessage:()=>false,markOnlineOnConnect:false,shouldIgnoreJid:jid=>jid.endsWith('@g.us')&&!groups.has(jid)&&!enrollment.active(),getMessage:async()=>undefined});
  const current=socket;

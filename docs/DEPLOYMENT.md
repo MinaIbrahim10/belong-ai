@@ -36,3 +36,7 @@ WhatsApp > Linked devices > select the bot > Log out revokes the session.
 To unlink permanently, stop the gateway, revoke on the phone, and remove its private state volume only with the operator's explicit intent. Do not print its contents. Backups, if any, must be encrypted and kept separately from SESSION_KEY.
 
 Production: obtain explicit BELONG administrator approval and announce the bot/provider behavior to members. Review theology sources and personality with leadership. Then, privately add only the approved group JID and set PRODUCTION_APPROVED=true. Production remains disabled in the delivered configuration.
+
+## Link from one phone
+
+On a trusted host, while paused and waiting for linking, run `python deployment/admin.py pair` in a private interactive terminal. Enter the test account number with country code and digits only. Read the returned code privately and enter it in WhatsApp Linked devices > Link a device > Link with phone number instead. Keep this terminal and the management port private. Never run the pairing command in a recorded notebook or shared terminal. If pairing fails, inspect the account on the phone before restarting. This path is not yet verified with a live account.
