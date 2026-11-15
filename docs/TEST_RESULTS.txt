@@ -1,0 +1,40 @@
+..............                                                           [100%]
+14 passed in 0.59s
+
+> belong-whatsapp-gateway@0.1.0 test
+> node --test *.test.js
+
+✔ private enrollment only accepts exact current challenge (1.61536ms)
+✔ expired challenge is not accepted (0.320794ms)
+✔ history cannot enroll a group (0.207708ms)
+✔ mock socket sends exactly once and no unauthorized traffic (2.285563ms)
+✔ history append is not answered (0.223251ms)
+✔ pause during generation cancels reply (0.371119ms)
+✔ backend outage sends one safe fallback (0.572347ms)
+✔ flood is limited (0.725714ms)
+✔ explicit invocation accepts mixed-language text (1.730291ms)
+✔ mentions support normalized device and LID identities (0.335928ms)
+✔ reply requires sent message ID and bot identity (0.278132ms)
+✔ ordinary chat and prefix lookalikes ignored (0.218323ms)
+✔ unauthorized groups and direct messages rejected (0.247536ms)
+✔ self messages and bot participant loops rejected (0.204452ms)
+✔ history and future messages rejected (0.232484ms)
+✔ view once and ephemeral not read (0.225524ms)
+✔ oversize and malformed messages ignored (0.263419ms)
+✔ rate limit resets and isolates users (0.493049ms)
+✔ reconnect backoff stops on restriction/logout/replacement (0.207277ms)
+✔ backend authentication and reply parsed (0.503655ms)
+✔ backend outages timeout and invalid responses fail closed (0.707607ms)
+✔ encrypted auth survives restart and rejects wrong key (44.196048ms)
+✔ deduplication and sent receipts persist without messages (1.677323ms)
+✔ defaults paused and rejects invalid encryption key (0.686476ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 658.259936
+PASS: actual backend/gateway HTTP health, authentication, pause/resume, enrollment, curated reply, disconnect. No external integration attempted.
+found 0 vulnerabilities
