@@ -11,7 +11,7 @@ export function createHandler({current,groups,store,limiter,active,answer,log=()
    busy=true;
    try{
     let reply;
-    try{reply=await answer(extract(m).text.replace(/^\/belong\s*/i,'').replace(/@\d+/g,'').trim()||'مرحبا');}
+    try{reply=await answer(extract(m).text.replace(/^\/belong\s*/i,'').replace(/@\d+/g,'').trim()||'مرحبا',hash(g+':'+m.key.participant));}
     catch{reply='صار عندي عطل صغير، جرّب تحكيني بعد شوي.';log('backend_unavailable');}
     if(active()){
      const result=await current.sendMessage(g,{text:reply});

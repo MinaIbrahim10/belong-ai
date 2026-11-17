@@ -29,8 +29,8 @@ export class Limiter {
   v.n++;this.entries.set(key,v);return true;
  }
 }
-export async function backendCall(url,token,text,fetcher=fetch){
- const response=await fetcher(url+'/respond',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({text}),signal:AbortSignal.timeout(25000)});
+export async function backendCall(url,token,text,fetcher=fetch,conversation=null){
+ const response=await fetcher(url+'/respond',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(conversation?{text,conversation}:{text}),signal:AbortSignal.timeout(52000)});
  if(!response.ok)throw new Error('backend_unavailable');
  const body=await response.json();
  if(typeof body.answer!=='string'||!body.answer.trim())throw new Error('invalid_reply');

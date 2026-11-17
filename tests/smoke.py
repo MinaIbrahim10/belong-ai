@@ -23,8 +23,8 @@ with tempfile.TemporaryDirectory() as state:
         assert req(18080,'/resume',env['ADMIN_TOKEN'],{})==b'resumed'
         assert req(18080,'/pause',env['ADMIN_TOKEN'],{})==b'paused'
         assert 'code' in json.loads(req(18080,'/enroll',env['ADMIN_TOKEN'],{}))
-        text=json.loads(req(18000,'/respond',env['INTERNAL_TOKEN'],{'text':'ليش نحب اعداءنا'}))['answer']
-        assert '5:44' in text
+        text=json.loads(req(18000,'/respond',env['INTERNAL_TOKEN'],{'text':'بكرا في اجتماع'}))['answer']
+        assert 'جدول' in text
         assert req(18080,'/disconnect',env['ADMIN_TOKEN'],{})==b'disconnected'
         print('PASS: actual backend/gateway HTTP health, authentication, pause/resume, enrollment, curated reply, disconnect. No external integration attempted.')
     finally:

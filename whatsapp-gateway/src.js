@@ -74,7 +74,7 @@ async function connect(){
  current.ev.on('messages.upsert',({messages,type})=>{if(store.paused())for(const m of messages)enrollment.accept(m,type);});
  current.ev.on('messages.upsert',createHandler({current,groups,store,limiter,
   active:()=>!stopped&&!store.paused()&&connected&&current===socket,
-  answer:text=>backendCall(env.BACKEND_URL||'http://backend:8000',env.INTERNAL_TOKEN,text),log}));
+  answer:(text,conversation)=>backendCall(env.BACKEND_URL||'http://backend:8000',env.INTERNAL_TOKEN,text,fetch,conversation),log}));
 }
 process.on('SIGTERM',()=>{stopped=true;clearTimeout(timer);clearInterval(cleaner);socket?.end(undefined);server.close();store.close();process.exit(0);});
 if(env.CONNECT_WHATSAPP==='true')connect().catch(()=>{stopped=true;log('connect_failed');});
