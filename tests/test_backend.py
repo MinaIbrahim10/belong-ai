@@ -52,10 +52,10 @@ async def test_mixed_language_prompt_and_sensitive_conversation(monkeypatch):
         assert 'حاسس' in await module.generate('حاسس lonely')
         payload=p.call_args.kwargs['json'];assert 'lonely' in payload['messages'][1]['content'];assert 'لا تعط تشخيصا' in payload['messages'][0]['content']
 @pytest.mark.asyncio
-async def test_fabricated_citation_blocked(monkeypatch):
+async def test_everyday_quotes_allowed(monkeypatch):
     monkeypatch.setenv('LLM_PROVIDER','openai-compatible');monkeypatch.setenv('LLM_BASE_URL','https://example.invalid/v1')
-    reply=httpx.Response(200,json={'choices':[{'message':{'content':'متى 99:99'}}]},request=httpx.Request('POST','https://example.invalid'))
-    with patch.object(httpx.AsyncClient,'post',new=AsyncMock(return_value=reply)):assert await module.generate('hello')==module.UNKNOWN
+    reply=httpx.Response(200,json={'choices':[{'message':{'content':'قال الطالب: "بكرا بدرس" 😂'}}]},request=httpx.Request('POST','https://example.invalid'))
+    with patch.object(httpx.AsyncClient,'post',new=AsyncMock(return_value=reply)):assert 'بكرا بدرس' in await module.generate('hello')
 @pytest.mark.asyncio
 async def test_quota_not_retried(monkeypatch):
     monkeypatch.setenv('LLM_PROVIDER','openai-compatible');monkeypatch.setenv('LLM_BASE_URL','https://example.invalid/v1')

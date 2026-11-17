@@ -53,8 +53,6 @@ async def generate(text, instruction=None, sources=None):
             answer=response.json()['choices'][0]['message']['content']
             answer=re.sub(r'<think>.*?</think>','',answer,flags=re.S).strip()
             if not answer or '<think>' in answer:return FALLBACK
-            # Fail closed on generated quotations/citations; theology uses curated responses.
-            if not instruction and re.search(r'\d+\s*[:：]\s*\d+|https?://|[«»“”"]',answer):return UNKNOWN
             return answer[:1600]
     except (httpx.HTTPError,KeyError,ValueError,TypeError):return FALLBACK
 THEOLOGY_WORDS = ['يسوع','المسيح','اللاهوت','لاهوت','ثالوث','انجيل','إنجيل','آية','الاية','الآية','معمود','خلاص','كنيسة','طائف','بروتستانت','ارثوذكس','أرثوذكس','كاثوليك','مريم','القديس','قيامة','صليب','الكتاب المقدس','الصلاة','صلاة','الله','bible','jesus','theolog','verse','christ','god','denomination']
